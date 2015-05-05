@@ -1,0 +1,16 @@
+{
+  "name": "<%= name %>",
+  "version": "0.0.0",
+  "dependencies": {},
+  "devDependencies": {
+    "babel-runtime": "^5.0.12",
+    "gulp": "^3.8.11",
+    "gulp-babel": "^5.1.0",
+    "gulp-flowtype": "git://github.com/ccapndave/gulp-flowtype.git",
+    "gulp-notify": "^2.2.0",
+    "gulp-sourcemaps": "^1.5.1",
+    "mocha": "^2.2.4",
+    "should": "^5.2.0",
+    "sinon": "^1.14.1"
+  }
+}
