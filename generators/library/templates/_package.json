@@ -1,6 +1,7 @@
 {
   "name": "<%= name %>",
   "version": "0.0.0",
+  "main": "<%= buildDir %>/index.js",
   "dependencies": {},
   "devDependencies": {
     "babel-runtime": "^5.0.12",
@@ -9,6 +10,7 @@
     "gulp-flowtype": "git://github.com/ccapndave/gulp-flowtype.git",
     "gulp-notify": "^2.2.0",
     "gulp-sourcemaps": "^1.5.1",
+    "jshint-sourcemap-reporter": "0.0.1",
     "mocha": "^2.2.4",
     "should": "^5.2.0",
     "sinon": "^1.14.1"

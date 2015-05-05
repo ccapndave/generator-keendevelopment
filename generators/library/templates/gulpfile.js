@@ -39,7 +39,7 @@ gulp.task('flow', ['babel'], function() {
 });
 
 gulp.task('watch', function() {
-  gulp.watch(srcGlobs, ['babel', 'flow']);
+  gulp.watch(srcGlob, ['babel', 'flow']);
 });
 
-gulp.task('default', ['watch']);
+gulp.task('default', ['babel', 'flow', 'watch']);
