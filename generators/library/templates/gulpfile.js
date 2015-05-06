@@ -6,23 +6,23 @@ var gulp              = require('gulp'),
     sourcemapReporter = require('jshint-sourcemap-reporter');
 
 var srcDir   = '<%= srcDir %>',
-    srcGlob  = srcDir + '/**/*/js',
+    srcGlob  = srcDir + '/**/*.js',
     buildDir = '<%= buildDir %>';
 
 gulp.task('babel', function(cb) {
   gulp.src(srcGlob)
     .pipe(sourcemaps.init())
-    .pipe(babel({ optional: ['runtime'] }))
+    .pipe(babel({ optional: ['runtime'], blacklist: ['flow'] }))
     .on('error', notify.onError(function(error) {
       return error.message;
     }))
-    .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest(buildDir + '/src'))
+    .pipe(sourcemaps.write())
+    .pipe(gulp.dest(buildDir))
     .on('end', cb);
 });
 
 gulp.task('flow', ['babel'], function() {
-  gulp.src(srcGlob)
+  gulp.src(buildDir + '/**/*.js')
     .pipe(flow({
       all: false,
       weak: false,

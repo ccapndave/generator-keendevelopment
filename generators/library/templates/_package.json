@@ -2,12 +2,19 @@
   "name": "<%= name %>",
   "version": "0.0.0",
   "main": "<%= buildDir %>/index.js",
+  "scripts": {
+    "test": "mocha --require babelhook",
+    "prepublish": "babel <%= srcDir %> --out-dir <%= buildDir %>"
+  },
+  "author": "Dave Keen",
+  "repository": "ccapndave/<%= name %>",
+  "licence": "MIT",
   "dependencies": {},
   "devDependencies": {
     "babel-runtime": "^5.0.12",
     "gulp": "^3.8.11",
     "gulp-babel": "^5.1.0",
-    "gulp-flowtype": "git://github.com/ccapndave/gulp-flowtype.git",
+    "gulp-flowtype": "^0.4.7",
     "gulp-notify": "^2.2.0",
     "gulp-sourcemaps": "^1.5.1",
     "jshint-sourcemap-reporter": "0.0.1",

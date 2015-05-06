@@ -8,9 +8,19 @@ var srcDir = 'src', buildDir = 'lib';
 module.exports = yeoman.generators.NamedBase.extend({
   writing: function() {
     this.fs.copyTpl(
+      this.templatePath('gitignore'),
+      this.destinationPath('.gitignore'),
+      { buildDir: buildDir }
+    );
+    this.fs.copyTpl(
+      this.templatePath('npmignore'),
+      this.destinationPath('.npmignore'),
+      { buildDir: buildDir }
+    );
+    this.fs.copyTpl(
       this.templatePath('_package.json'),
       this.destinationPath('package.json'),
-      { name: this.name, buildDir: buildDir  }
+      { name: this.name, srcDir: srcDir, buildDir: buildDir  }
     );
     this.fs.copyTpl(
       this.templatePath('gulpfile.js'),
@@ -23,6 +33,10 @@ module.exports = yeoman.generators.NamedBase.extend({
       { buildDir: buildDir }
     );
     this.fs.copy(
+      this.templatePath('babelhook.js'),
+      this.destinationPath('babelhook.js')
+    );
+    this.fs.copy(
       this.templatePath('editorconfig'),
       this.destinationPath('.editorconfig')
     );
@@ -33,6 +47,10 @@ module.exports = yeoman.generators.NamedBase.extend({
     this.fs.copy(
       this.templatePath('src/index.js'),
       this.destinationPath('src/index.js')
+    );
+    this.fs.copy(
+      this.templatePath('test/gitkeep'),
+      this.destinationPath('test/.gitkeep')
     );
   },
 
