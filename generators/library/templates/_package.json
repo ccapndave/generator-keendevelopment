@@ -11,6 +11,7 @@
   "licence": "MIT",
   "dependencies": {},
   "devDependencies": {
+    "babel": "^5.1.13",
     "babel-runtime": "^5.0.12",
     "gulp": "^3.8.11",
     "gulp-babel": "^5.1.0",
