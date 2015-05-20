@@ -9,6 +9,18 @@
   "author": "Dave Keen",
   "repository": "ccapndave/<%= name %>",
   "licence": "MIT",
+  "browserify": {
+    "transform": [
+      [
+        "babelify",
+        {
+          "optional": [
+            "runtime"
+          ]
+        }
+      ]
+    ]
+  },
   "dependencies": {},
   "devDependencies": {
     "autoprefixer-core": "^5.1.11",
