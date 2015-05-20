@@ -1,0 +1,4 @@
+<%= buildDir %>/
+node_modules/
+.idea
+*.iml

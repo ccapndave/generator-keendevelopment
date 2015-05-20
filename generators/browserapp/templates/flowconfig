@@ -1,0 +1,8 @@
+[ignore]
+
+[include]
+./<%= buildDir %>/.*
+
+[libs]
+
+[options]
