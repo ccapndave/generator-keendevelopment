@@ -17,19 +17,18 @@ var gulp              = require('gulp'),
     _                 = require('lodash');
 
 var server,
+    appDir   = '<%= appDir %>',
     srcDir   = '<%= srcDir %>',
-    srcGlob  = srcDir + '/**/*.js',
     styleDir = '<%= styleDir %>',
-    entry = '<%= entry %>',
-    buildDir = '<%= buildDir %>';
+    entry    = '<%= entry %>',
+    buildDir = '<%= buildDir %>',
+    flowDest = '<%= flowDest %>';
 
 /** The array of things to copy over directly */
-var clientAssetGlobs = [
-    clientDir + "/**/*",
-    "!" + srcDir,
-    "!" + srcDir + "/**/*",
-    "!" + styleDir,
-    "!" + styleDir + "/**/*"
+var assetGlobs = [
+  appDir + "/**/*",
+  "!" + srcDir, "!" + srcDir + "/**/*",
+  "!" + styleDir, "!" + styleDir + "/**/*"
 ];
 
 function timeTask(stream, taskFn) {
@@ -42,7 +41,7 @@ function getBrowserifyBundler(useSourceMaps, useWatchify) {
   var params = useWatchify ? _.assign({ debug: useSourceMaps }, watchify.args) : { debug: useSourceMaps };
   var wrapper = useWatchify ? _.compose(watchify, browserify) : browserify;
   params = _.assign(params, { });
-  return wrapper(params).require(require.resolve(srcDir + "/" + entry), { entry: true });
+  return wrapper(params).require(require.resolve("./" + srcDir + "/" + entry), { entry: true });
 }
 
 gulp.task('watchify', function() {
@@ -56,13 +55,13 @@ gulp.task('watchify', function() {
       .on("error", notify.onError(function(error) {
         return error.message;
       }))
-      .pipe(exorcist(clientDest + '/js/index.js.map')) // for Safari
+      .pipe(exorcist(buildDir + '/js/index.js.map')) // for Safari
       .pipe(source("bundle.js"))
       .pipe(gulp.dest(buildDir + '/js'))
       .pipe(notify('Built in ' + (Date.now() - start) + 'ms'));
 
     // Trigger live reload if the client server is running
-    if (clientServer) stream.pipe(clientServer.notify());
+    if (server) stream.pipe(server.notify());
   };
 
   bundle.on('update', rebundle);
@@ -94,12 +93,12 @@ gulp.task('less:watch', function() {
 
 gulp.task('copy-assets', function() {
   // Copy everything apart from the src and style folders into the client build folder
-  gulp.src(clientAssetGlobs)
+  gulp.src(assetGlobs)
     .pipe(gulp.dest(buildDir));
 });
 
 gulp.task('copy-assets:watch', function() {
-  gulp.watch(clientAssetGlobs, ['copy-assets']);
+  gulp.watch(assetGlobs, ['copy-assets']);
 });
 
 gulp.task('flow:babel', function(cb) {
