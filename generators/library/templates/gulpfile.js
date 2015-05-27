@@ -13,9 +13,7 @@ gulp.task('babel', function(cb) {
   gulp.src(srcGlob)
     .pipe(sourcemaps.init())
     .pipe(babel({ optional: ['runtime'], blacklist: ['flow'] }))
-    .on('error', notify.onError(function(error) {
-      return error.message;
-    }))
+    .on('error', notify.onError('<%= error.message %>'))
     .pipe(sourcemaps.write())
     .pipe(gulp.dest(buildDir))
     .on('end', cb);

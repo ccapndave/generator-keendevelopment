@@ -52,9 +52,7 @@ gulp.task('watchify', function() {
     var start = Date.now();
     var stream = bundle
       .bundle()
-      .on("error", notify.onError(function(error) {
-        return error.message;
-      }))
+      .on("error", notify.onError('<%= error.message %>'))
       .pipe(exorcist(buildDir + '/js/index.js.map')) // for Safari
       .pipe(source("bundle.js"))
       .pipe(gulp.dest(buildDir + '/js'))
@@ -73,9 +71,7 @@ gulp.task('less', function() {
   var stream = gulp.src([styleDir + '/**/*.less'])
     .pipe(sourcemaps.init())
     .pipe(less())
-    .on("error", notify.onError(function(error) {
-      return error.message;
-    }))
+    .on("error", notify.onError('<%= error.message %>'))
     .pipe(postcss([ autoprefixer({ map: true, browsers: ['last 2 version'] }) ]))
     .pipe(concatCss("bundle.css"))
     .pipe(sourcemaps.write('.'))
@@ -104,10 +100,8 @@ gulp.task('copy-assets:watch', function() {
 gulp.task('flow:babel', function(cb) {
   gulp.src(srcDir + '/**/*.js')
     .pipe(sourcemaps.init())
-    .pipe(babel({ optional: ['runtime'], blacklist: ['flow'] }))
-    .on('error', notify.onError(function(error) {
-      return error.message;
-    }))
+    .pipe(babel({ blacklist: ['flow'] }))
+    .on('error', notify.onError('<%= error.message %>'))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(flowDest))
     .on('end', cb);
@@ -137,6 +131,7 @@ gulp.task('flow:watch', function() {
 gulp.task('dev', ['watchify', 'less', 'less:watch', 'copy-assets', 'copy-assets:watch', 'flow', 'flow:watch']);
 
 gulp.task('default', ['dev'], function() {
-  server = gls.static(buildDir);
+  // Serve the root folder as well to give access to assets in node_modules when developing
+  server = gls.static([buildDir, '/']);
   server.start();
 });
