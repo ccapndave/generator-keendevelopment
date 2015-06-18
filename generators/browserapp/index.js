@@ -109,6 +109,13 @@ module.exports = yeoman.generators.NamedBase.extend({
       this.destinationPath(testDir + '/.gitkeep')
     );
     this.fs.write(srcDir + '/' + entry, '');
+
+    if (useTypescript) {
+      this.fs.copy(
+        this.templatePath(testDir + '/tsconfig.json'),
+        this.destinationPath(testDir + '/tsconfig.json')
+      );
+    }
   },
 
   install: function () {

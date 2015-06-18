@@ -62,7 +62,7 @@ gulp.task('watchify', function() {
     var start = Date.now();
     var stream = bundle
       .bundle()
-      .on("error", notify.onError("\\<%= error.message %\\>"))
+      .on("error", notify.onError("<" + "%= error.message %>"))
       .pipe(exorcist(buildDir + '/js/index.js.map')) // for Safari
       .pipe(source("bundle.js"))
       .pipe(gulp.dest(buildDir + '/js'))
@@ -81,7 +81,7 @@ gulp.task('less', function() {
   var stream = gulp.src([styleDir + '/**/*.less'])
     .pipe(sourcemaps.init())
     .pipe(less())
-    .on("error", notify.onError("\\<%= error.message %\\>"))
+    .on("error", notify.onError("<" + "%= error.message %>"))
     .pipe(postcss([ autoprefixer({ map: true, browsers: ['last 2 version'] }) ]))
     .pipe(concatCss("bundle.css"))
     .pipe(sourcemaps.write('.'))
@@ -111,7 +111,7 @@ gulp.task('flow:babel', function(cb) {
   gulp.src(srcDir + '/**/*.js')
     .pipe(sourcemaps.init())
     .pipe(babel({ blacklist: ['flow'] }))
-    .on('error', notify.onError("<\\%= error.message %\\>"))
+    .on('error', notify.onError("<" + "%= error.message %>"))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(flowDest))
     .on('end', cb);
