@@ -1,5 +1,6 @@
 var gulp              = require('gulp'),
     babel             = require('gulp-babel'),
+    tsify             = require('tsify'),
     sourcemaps        = require('gulp-sourcemaps'),
     notify            = require('gulp-notify'),
     flow              = require('gulp-flowtype'),
@@ -22,7 +23,9 @@ var server,
     styleDir = '<%= styleDir %>',
     entry    = '<%= entry %>',
     buildDir = '<%= buildDir %>',
-    flowDest = '<%= flowDest %>';
+    flowDest = '<%= flowDest %>',
+    useTypescript = <%= useTypescript %>,
+    useFlow = <%= useFlow %>;
 
 /** The array of things to copy over directly */
 var assetGlobs = [
@@ -41,18 +44,25 @@ function getBrowserifyBundler(useSourceMaps, useWatchify) {
   var params = useWatchify ? _.assign({ debug: useSourceMaps }, watchify.args) : { debug: useSourceMaps };
   var wrapper = useWatchify ? _.compose(watchify, browserify) : browserify;
   params = _.assign(params, { });
-  return wrapper(params).require(require.resolve("./" + srcDir + "/" + entry), { entry: true });
+  return wrapper(params).add(require.resolve("./" + srcDir + "/" + entry));
 }
 
 gulp.task('watchify', function() {
   var bundle = getBrowserifyBundler(true, true);
+
+  if (useTypescript) {
+    // Add a Typescript plugin, and use the ES6 definitions
+    bundle = bundle
+      .plugin('tsify', { noImplicitAny: true, module: 'commonjs', noLib: true })
+      .add('node_modules/tsify/node_modules/typescript/bin/lib.es6.d.ts');
+  }
 
   // The bundling process
   var rebundle = function() {
     var start = Date.now();
     var stream = bundle
       .bundle()
-      .on("error", notify.onError('<%= error.message %>'))
+      .on("error", notify.onError("\\<%= error.message %\\>"))
       .pipe(exorcist(buildDir + '/js/index.js.map')) // for Safari
       .pipe(source("bundle.js"))
       .pipe(gulp.dest(buildDir + '/js'))
@@ -71,7 +81,7 @@ gulp.task('less', function() {
   var stream = gulp.src([styleDir + '/**/*.less'])
     .pipe(sourcemaps.init())
     .pipe(less())
-    .on("error", notify.onError('<%= error.message %>'))
+    .on("error", notify.onError("\\<%= error.message %\\>"))
     .pipe(postcss([ autoprefixer({ map: true, browsers: ['last 2 version'] }) ]))
     .pipe(concatCss("bundle.css"))
     .pipe(sourcemaps.write('.'))
@@ -101,7 +111,7 @@ gulp.task('flow:babel', function(cb) {
   gulp.src(srcDir + '/**/*.js')
     .pipe(sourcemaps.init())
     .pipe(babel({ blacklist: ['flow'] }))
-    .on('error', notify.onError('<%= error.message %>'))
+    .on('error', notify.onError("<\\%= error.message %\\>"))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(flowDest))
     .on('end', cb);
@@ -128,10 +138,11 @@ gulp.task('flow:watch', function() {
   gulp.watch(srcDir + "/**/*.js", ['flow']);
 });
 
-gulp.task('dev', ['watchify', 'less', 'less:watch', 'copy-assets', 'copy-assets:watch', 'flow', 'flow:watch']);
+var devDeps = ['watchify', 'less', 'less:watch', 'copy-assets', 'copy-assets:watch'];
+if (useFlow) devDeps.concat(['flow', 'flow:watch']);
+gulp.task('dev', devDeps);
 
 gulp.task('default', ['dev'], function() {
-  // Serve the root folder as well to give access to assets in node_modules when developing
-  server = gls.static([buildDir, '/']);
+  server = gls.new('server.js');
   server.start();
 });

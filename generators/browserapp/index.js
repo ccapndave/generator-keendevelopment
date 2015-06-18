@@ -1,7 +1,5 @@
 'use strict';
 var yeoman = require('yeoman-generator');
-var chalk = require('chalk');
-var yosay = require('yosay');
 
 var appDir = 'app',
     srcDir = appDir + '/src',
@@ -9,9 +7,35 @@ var appDir = 'app',
     testDir = appDir + '/test',
     buildDir = 'build',
     flowDest = 'build_flow',
-    entry = 'app.js';
+    entry = 'app.js',
+    useTypescript = false,
+    useFlow = false;
 
 module.exports = yeoman.generators.NamedBase.extend({
+  prompting: function() {
+    var done = this.async();
+
+    this.prompt({
+      type    : 'list',
+      name    : 'type',
+      message : 'What language would you like to code in?',
+      default : 'Typescript',
+      choices : [ 'ES6', 'ES6 + Flow', 'Typescript' ]
+    }, function(answers) {
+      switch (answers.type) {
+        case 'Typescript':
+          useTypescript = true;
+          entry = 'app.ts';
+          break;
+        case 'ES6 + Flow':
+          useFlow = true;
+          break;
+      }
+
+      done();
+    }.bind(this));
+  },
+
   writing: function() {
     this.fs.copyTpl(
       this.templatePath('gitignore'),
@@ -31,7 +55,21 @@ module.exports = yeoman.generators.NamedBase.extend({
     this.fs.copyTpl(
       this.templatePath('gulpfile.js'),
       this.destinationPath('gulpfile.js'),
-      { appDir: appDir, entry: entry, srcDir: srcDir, styleDir: styleDir, flowDest: flowDest, buildDir: buildDir }
+      {
+        appDir: appDir,
+        entry: entry,
+        srcDir: srcDir,
+        styleDir: styleDir,
+        flowDest: flowDest,
+        buildDir: buildDir,
+        useTypescript: useTypescript,
+        useFlow: useFlow
+      }
+    );
+    this.fs.copyTpl(
+      this.templatePath('server.js'),
+      this.destinationPath('server.js'),
+      { }
     );
     this.fs.copyTpl(
       this.templatePath('flowconfig'),
